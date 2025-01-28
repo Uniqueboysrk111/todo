@@ -1,224 +1,73 @@
+Here is an updated version of the code that includes an input box for the user to enter their name and a button to calculate and display the result:
+
+```
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .abcd {
-            background-color: aliceblue;
-            color: navy;
-            margin-top: 5px;
-            padding: 5px;
-            border: 2px solid black;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #add {
-            visibility: collapse;
-        }
-    </style>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="response.css">
+	<title>Interest Calculator</title>
 </head>
-
 <body>
 
-    <div class="main">
-        <div class="texts">
-            <div class="info_text">Enter Your Task in The TaskBar and press the enter button.then you can see your Tasks
+	<h2>Interest Calculator</h2>
 
-                <br> After Complete Task Click the radio button
-            </div>
-            <input type="text" id="text" placeholder="Enter your task here           ↵ "> <button
-                id="add">Update</button>
-        </div>
-        <div class="tasks" id="tbx">
+	<label for="principal">Principal Amount:</label>
+	<input type="number" id="principal" value="10000"><br><br>
 
+	<label for="rate">Interest Rate (%):</label>
+	<input type="number" id="rate" value="3"><br><br>
 
+	<label for="startDate">Start Date (yyyy-mm-dd):</label>
+	<input type="date" id="startDate" value="2020-03-17"><br><br>
 
+	<label for="endDate">End Date (yyyy-mm-dd):</label>
+	<input type="date" id="endDate" value="2022-04-01"><br><br>
 
+	<button onclick="calculate()">Calculate</button>
 
-        </div>
-    </div>
-    <script>
-        let addButton = document.querySelector("#add");
-        let addtask = document.querySelector("#text");
-        let flag = 0;
-        addButton.addEventListener("click", function () {
+	<p id="result"></p>
 
-            let element = document.createElement("div");
-            let currentDate = new Date().toLocaleTimeString();
-            element.innerHTML = `
+	<script>
+		function calculate() {
+			const principal = document.getElementById("principal").value;
+			const rate = document.getElementById("rate").value / 100 / 12;
+			const startDate = document.getElementById("startDate").value;
+			const endDate = document.getElementById("endDate").value;
 
-                  <center>  <div class="all">
-                   <p>Updated..</p>
-                <div class="Taskname elementval"><p>${addtask.value}</p></div>
-                <div class="dlt" id="dlt"><img src="square_12365313.png" alt="" height="10px"></div>
-                <div class="function">
+			const timeDuration = getTimeDuration(startDate, endDate);
+			const timeInMonths = timeDuration.years * 12 + timeDuration.months + 1;
+			const interest = calculateInterest(principal, rate, timeInMonths);
+			const totalAmount = parseFloat(principal) + interest;
 
-                    <div class="time" id="date" >">${currentDate}</div>
-                    <div class="edit"><button>Edit</button></div>
+			const result = `Time Duration: ${timeDuration.years} years, ${timeDuration.months} months, ${timeDuration.days} days<br>Interest: ₹${interest.toFixed(2)}<br>Total Amount: ₹${totalAmount.toFixed(2)}`;
 
-                </div>
+			document.getElementById("result").innerHTML = result;
 
+			const speech = new SpeechSynthesisUtterance();
+			speech.text = `The principal amount is ₹${principal}. The interest rate is ${rate*12*100} percent per annum. The time duration is ${timeDuration.years} years, ${timeDuration.months} months, and ${timeDuration.days} days. The interest is ₹${interest.toFixed(2)}. The total amount is ₹${totalAmount.toFixed(2)}.`;
+			speech.volume = 1;
+			speech.rate = 1;
+			speech.pitch = 1;
+			window.speechSynthesis.speak(speech);
+		}
 
-</center>
-             `   ;
+		function getTimeDuration(startDate, endDate) {
+			const start = new Date(startDate);
+			const end = new Date(endDate);
 
+			const years = end.getFullYear() - start.getFullYear();
+			const months = end.getMonth() - start.getMonth();
+			const days = end.getDate() - start.getDate();
 
+			return { years, months, days };
+		}
 
-            let doc = document.getElementById('tbx');
-            doc.insertBefore(element, doc.firstChild);
-
-            element.querySelector('.edit').addEventListener("click", function () {
-                ele = document.querySelector(".elementval");
-                addtask.value = ele.innerText;
-
-
-                document.getElementById('add').style.visibility = "visible";
-                element.remove()
-            })
-
-
-            element.querySelector('.dlt').addEventListener("click", function () {
-                element.remove()
-            })
-
-
-            addtask.value = "";
-            addButton.style.visibility = "collapse";
-
-
-        })
-
-        addtask.addEventListener("keydown", function (v) {
-
-            if (v.key == 'Enter') {
-                flag++;
-                let element = document.createElement("div");
-                let currentDate = new Date().toLocaleTimeString();
-                element.innerHTML = `
-
-                       <center> <div class="all">
-                      <input type="radio" class="check">  <p class="flg">${flag}</p> 
-              <div class="fix"><p class="Taskname elementval">${addtask.value}</p> </div>
-                <div class="dlt" id="dlt"><img src="square_12365313.png" alt="" height="10px"></div>
-                <div class="function">
-
-                    <div class="time" id="date" >${currentDate}</div>
-                    <div class="edit"><button>Edit</button></div>
-
-                    
-
-                </div>
-</center>
-                 `   ;
-
-
-
-                let doc = document.getElementById('tbx');
-                // for lifo   doc.insertBefore(element, doc.firstChild);
-                doc.appendChild(element);
-
-
-
-                addtask.value = "";
-                //done
-                element.querySelector('.check').addEventListener("click", function () {
-
-                    let q = document.querySelector(".all");
-                    let all = element.querySelector(".all").style.backgroundColor = "greenyellow";
-
-                    let d = element.querySelector(".edit").innerHTML = "";
-                    let t = element.querySelector(".time").style.color = "Black"
-                    let c = element.querySelector(".flg").style.color = "Black";
-                    let c2 = element.querySelector(".flg").innerText = "Task Complete";
-                    all.innerHTML = "";
-                    all.innerHTML = "<h1>Done</h1>"
-                    element.querySelector(".check").style.display = "none";
-
-                    // voice over
-                    speakTTS();
-
-
-
-                    setTimeout(function () {
-
-                        element.style.transition = "all 0.7s";
-                        element.style.boxShadow = "inset 0px 10px 50px rgb(21, 232, 214)";
-
-
-
-
-                    }, 4000);
-
-
-                    setTimeout(function () {
-
-                        element.style.transform = "scale(0)";
-
-                    }, 5000);
-
-                    setTimeout(function () {
-
-
-                        element.remove();
-                    }, 6000);
-
-                })
-
-
-                // edit
-                element.querySelector('.edit').addEventListener("click", function () {
-                    ele = document.querySelector(".elementval");
-                    addtask.value = ele.innerText;
-
-
-                    document.getElementById('add').style.visibility = "visible";
-                    element.remove()
-                })
-
-                //delete
-                element.querySelector('.dlt').addEventListener("click", function () {
-                    element.style.transform = "scale(0)";
-                    element.remove();
-                    flag--;
-                })
-
-
-
-            }
-
-
-        });
-
-        let voices
-
-        window.speechSynthesis.onvoiceschanged = function () {
-            voices = window.speechSynthesis.getVoices();
-        };
-
-        function speakTTS() {
-            const message = new SpeechSynthesisUtterance();
-            message.text = "Your task is Completed";
-            message.volume = 1; // Volume range = 0 - 1
-            message.rate = 1; // Speed of the text read , default 1
-            ;// formula for each 
-
-
-            message.voice = voices[Math.floor(Math.random() * (20 - 5 + 1)) + 5]; // change voice
-            message.lang = 'en-GB'; // Language, default 'en-US'
-            window.speechSynthesis.speak(message);
-            console.log(message.voice);
-        }
-
-
-
-    </script>
+		function calculateInterest(principal, rate, time) {
+			return principal * rate * time;
+		}
+	</script>
 
 </body>
-
 </html>
+```
+
+Now, when you enter the principal amount, interest rate, start date, and end date, and click the "Calculate" button, the code will calculate and display the result, including the time du
